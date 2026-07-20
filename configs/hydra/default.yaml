@@ -1,0 +1,17 @@
+# @package hydra
+# Shared Hydra runtime settings. Every workflow that unifies its output under
+# `{output.workdir}/{name}` should include this via:
+#   defaults:
+#     - /hydra: default
+#
+# Per-process suffix `node{GROUP_RANK}-local{LOCAL_RANK}` avoids collisions
+# when `fabric run` (torchrun) spawns several workers at the same second;
+# see torch/distributed/elastic/agent/server/local_elastic_agent.py for the
+# env vars.
+job:
+  chdir: false
+run:
+  dir: ${output.workdir}/${name}/hydra/${now:%Y%m%d_%H%M%S}-node${oc.env:GROUP_RANK,0}-local${oc.env:LOCAL_RANK,0}
+sweep:
+  dir: ${output.workdir}/${name}/hydra_sweep/${now:%Y%m%d_%H%M%S}
+  subdir: ${hydra.job.num}

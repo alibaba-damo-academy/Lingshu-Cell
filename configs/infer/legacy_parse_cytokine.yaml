@@ -1,0 +1,65 @@
+# @package _global_
+#
+# Legacy inference config for PARSE cytokine perturbation.
+# Paper settings: steps=3, cfg_scale=1, cfg_general_control (equivalent to old cfg_PBS).
+# Condition CSV must have columns: donor, cytokine, n_cells.
+#
+# Usage:
+#   python -m workflows.infer.main \
+#       --config-name infer/legacy_parse_cytokine \
+#       checkpoint.model_path=/path/to/parse_cytokine_85M.pth \
+#       task.condition_csv=data/parse_cytokine/Donor10_conditions.csv
+
+defaults:
+  - /infer_schema
+  - /hydra: infer
+  - /modules/tokenizers@tokenizer: dense_gene1tok_parse
+  - /modules/models@model: patch_dense
+  - /modules/samplers@sampler: default
+  - _self_
+
+name: parse_cytokine_infer
+seed: 3407
+device: auto
+dtype: auto
+
+output:
+  workdir: "${checkpoint.training_dir}"
+  sample_dir: "samples/${name}/ema-${checkpoint.ema_std}-iter-${checkpoint.iteration}-step${sampler.steps}-cfg${sampler.cfg_scale}"
+
+checkpoint:
+  is_legacy: true
+  training_dir: ""
+  model_path: ""
+  iteration: 1440000
+  ema_std: 0.050
+
+task:
+  subtask: 1of1
+  base_seed: 0
+  save_every_n_samples: 500
+  condition_csv: ""  # Path to donor-specific condition CSV
+  batch_size: 64
+
+# Tokenizer: general tokenizer with PARSE vocab (donor + cytokine slots)
+tokenizer:
+  vocab_file: data/vocabs/legacy/tokenizer_vcc_cond_dense_gene1tok_parse.json
+
+# Model: default settings (patch_size=8, no gene embeddings)
+model:
+  config:
+    patch_size: 8
+    patch_token_shuffle_per_block: false
+    use_gene_embedding_in_condition: false
+    use_gene_embedding_fusion: false
+
+sampler:
+  steps: 3
+  algorithm: origin
+  t_schedule: cosine-t
+  cfg_scale: 1.0
+  cfg_token_type: cfg_general_control
+  enforce_zero_snr: true
+  unmask_schedule: deterministic
+  eps: 1.0e-3
+  eps_start: 2.0e-4

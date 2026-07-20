@@ -1,0 +1,43 @@
+# =============================================================================
+# Lingshu-Cell: Inference Dependencies
+# =============================================================================
+# Tested with Python 3.10 and CUDA 12.x
+
+# --- Core ---
+torch>=2.1.0
+lightning>=2.1.0
+hydra-core>=1.3.0
+omegaconf>=2.3.0
+
+# --- Data handling ---
+anndata>=0.10.0
+scanpy>=1.9.0
+numpy>=1.24.0
+scipy>=1.10.0
+pandas>=2.0.0
+h5py>=3.8.0
+
+# --- Model submodules (required for TransEncoder) ---
+# flash-attention 2 (GPU attention backend, recommended for speed)
+# Install from: https://github.com/Dao-AILab/flash-attention
+# pip install flash-attn --no-build-isolation
+flash-attn>=2.5.0
+einops>=0.6.0
+
+# Fused rotary embedding and RMSNorm kernels (from flash-attention repo)
+# These are installed as part of the flash-attention build:
+#   cd flash-attention/csrc/rotary && pip install .
+#   cd flash-attention/csrc/layer_norm && pip install .
+# They provide the `rotary_emb` and `dropout_layer_norm` packages.
+
+# --- Misc ---
+tqdm>=4.60.0
+matplotlib>=3.5.0
+
+# --- Evaluation (optional) ---
+# cell-eval: required for VCC and PARSE cytokine evaluation
+#   pip install cell-eval
+# scib: required for iLISI metric
+#   pip install scib
+# rapids-singlecell: GPU-accelerated UMAP and neighbors (requires RAPIDS)
+#   See https://rapids.ai/start.html

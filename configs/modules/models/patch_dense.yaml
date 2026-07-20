@@ -1,0 +1,21 @@
+_target_: src.modules.models.transencoder_dense_patch.model.TransEncoder
+config:
+  _target_: src.modules.models.transencoder_dense_patch.config.TransEncoderConfig.from_name
+  name: Diff_LLaMA_85M
+  gene_id_name_csv: data/vcc/gene_id_name.csv
+  # Current train mainline only keeps the rope path.
+  pos_emb: rope
+  attn_module: Auto
+  # Patch-dense mainline depends on this patch size; changing it affects the
+  # patchify/depatchify data flow and checkpoint compatibility.
+  patch_size: 8
+  patch_seed: 0
+  patch_token_shuffle_per_block: false
+  patch_token_shuffle_seed: 0
+  # These stay explicit because they affect whether extra gene embedding paths
+  # are wired into the default model.
+  use_gene_embedding_in_condition: false
+  use_gene_embedding_fusion: false
+  gene_embedding_file: ""
+  gene_embedding_dim: 5120
+  use_lm_head_masked_only: false

@@ -1,0 +1,21 @@
+# @package _global_
+
+defaults:
+  - /eval_schema
+  - _self_
+
+name: eval
+device: auto
+
+sample_dir: ""
+real_data: ""
+gene_id_name_file: data/vcc/gene_id_name.csv
+convert_ensembl_to_name: true
+num_samples: 10000
+seed: 42
+
+metrics:
+  - umap
+  - expressed_genes
+  - distribution
+  - linregress

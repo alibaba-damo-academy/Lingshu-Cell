@@ -1,0 +1,14 @@
+# @package hydra
+# Hydra runtime settings for inference workflow.
+# Hydra output is saved inside the sample output directory so all
+# inference artifacts (batches, merged.h5ad, hydra config) stay together.
+#
+# ``output.sample_dir`` is always non-empty at resolution time because
+# ``resolve_infer_run_dir`` writes back the auto-generated name.
+job:
+  chdir: false
+run:
+  dir: ${output.workdir}/${output.sample_dir}/hydra/${now:%Y%m%d_%H%M%S}-node${oc.env:GROUP_RANK,0}-local${oc.env:LOCAL_RANK,0}
+sweep:
+  dir: ${output.workdir}/${output.sample_dir}/hydra_sweep/${now:%Y%m%d_%H%M%S}
+  subdir: ${hydra.job.num}

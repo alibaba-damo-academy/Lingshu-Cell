@@ -1,0 +1,78 @@
+# @package _global_
+#
+# Legacy inference config for VCC gene perturbation (CRISPRi).
+# Paper settings: steps=3, cfg_scale=2, cfg_non_targeting, clue injection.
+#
+# Usage:
+#   python -m workflows.infer.main \
+#       --config-name infer/legacy_vcc \
+#       checkpoint.model_path=/path/to/vcc_perturbation_85M.pth \
+#       sampler.clue_csv=/path/to/whole_dataset_stringent_clue.csv
+
+defaults:
+  - /infer_schema
+  - /hydra: infer
+  - /modules/tokenizers@tokenizer: dense_gene1tok
+  - /modules/models@model: patch_dense
+  - /modules/samplers@sampler: default
+  - _self_
+
+name: vcc_legacy_infer
+seed: 3407
+device: auto
+dtype: auto
+
+output:
+  workdir: "${checkpoint.training_dir}"
+  sample_dir: "samples/${name}/ema-${checkpoint.ema_std}-iter-${checkpoint.iteration}-step${sampler.steps}-cfg${sampler.cfg_scale}"
+
+checkpoint:
+  is_legacy: true
+  training_dir: ""
+  model_path: ""
+  iteration: 550000
+  ema_std: 0.050
+
+task:
+  subtask: 1of1
+  base_seed: 0
+  save_every_n_samples: 500
+  condition_csv: data/vcc/pert_counts_Test.csv
+  batch_size: 32
+
+# Tokenizer: general tokenizer with VCC vocab
+tokenizer:
+  vocab_file: data/vocabs/legacy/tokenizer_vcc_cond_dense_gene1tok.json
+
+# Model: VCC-specific settings
+model:
+  config:
+    patch_size: 32
+    patch_token_shuffle_per_block: true
+    patch_token_shuffle_seed: 0
+    use_gene_embedding_in_condition: true
+    use_gene_embedding_fusion: true
+    gene_embedding_file: data/opensource/hf_release/gene_embeddings.npz
+    gene_id_name_csv: data/vcc/gene_id_name.csv
+
+sampler:
+  steps: 3
+  algorithm: origin
+  t_schedule: cosine-t
+  cfg_scale: 2.0
+  cfg_token_type: cfg_non_targeting
+  enforce_zero_snr: true
+  unmask_schedule: deterministic
+  eps: 1.0e-3
+  eps_start: 2.0e-4
+  # Clue-based biology prior injection
+  clue_csv: ""  # Set to path of whole_dataset_stringent_clue.csv
+  clue_filter_rule_sets: ["reference_mean>=2,target_mean<=1,cell_type!=H1"]
+  clue_count_rules: ["count_1"]
+  clue_gathering_mode: any
+  clue_group_col: cell_type
+  clue_gene_id_name_csv: data/vcc/gene_id_name.csv
+  clue_target_obs_key: target_gene
+  condition_target_count: 1
+  clue_overwrite_target: true
+  clue_use_ensembl_as_target: true

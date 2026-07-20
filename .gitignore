@@ -1,0 +1,45 @@
+# Python
+*.pyc
+__pycache__/
+*.egg-info/
+
+# Virtual environments
+.venv/
+
+# IDE
+.ipynb_checkpoints/
+
+# Runtime artifacts
+output/
+outputs/
+workdir/
+wandb/
+swanlog/
+
+# Large data (users prepare locally)
+data/TransData
+data/TransData_fast
+data/pretrain/
+data/drug/tahoe/all_data/
+data/drug/tahoe_state/all_data
+data/organoid/processed/
+data/organoid/cell_manifest.parquet
+data/organoid/cell_eval/*/real_validation.h5ad
+data/organoid/cell_eval/*/baseline/
+data/double_gene_perturb/norman2019/cell_eval_baseline/
+data/double_gene_perturb/norman2019/condition_csv/
+data/double_gene_perturb/norman2019/real_validation/
+data/double_gene_perturb/adamson_crispri/shared_eval/
+
+# Model binaries
+*.bin
+*.zst
+*.model
+models_*
+
+# Misc
+core-python-*
+core-pt_*
+core-worker*
+TASK*
+.sumi

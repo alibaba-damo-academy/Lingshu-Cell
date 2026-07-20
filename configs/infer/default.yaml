@@ -1,0 +1,31 @@
+# @package _global_
+
+defaults:
+  - /infer_schema
+  - /hydra: infer
+  - /modules/tokenizers@tokenizer: dense_gene1tok
+  - /modules/models@model: patch_dense
+  - /modules/samplers@sampler: default
+  - _self_
+
+name: infer
+seed: 3407
+device: auto
+dtype: auto
+
+output:
+  workdir: "${checkpoint.training_dir}"
+  sample_dir: "samples/${name}/ema-${checkpoint.ema_std}-iter-${checkpoint.iteration}-step${sampler.steps}-${sampler.algorithm}-${sampler.t_schedule}"
+
+checkpoint:
+  training_dir: ""
+  model_path: ""
+  iteration: 10000
+  ema_std: 0.050
+
+task:
+  subtask: 1of1
+  base_seed: 0
+  save_every_n_samples: 500
+  condition_csv: ""
+  batch_size: 32

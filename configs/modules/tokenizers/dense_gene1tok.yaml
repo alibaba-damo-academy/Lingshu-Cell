@@ -1,0 +1,26 @@
+_target_: src.modules.tokenizers.dense_gene1tok_tokenizer.DenseGene1TokTokenizer
+vocab_file: data/vocabs/legacy/tokenizer_vcc_cond_dense_gene1tok.json
+condition_format:
+  _target_: src.modules.condition_formats.condition_format.ConditionFormat
+  bookend_token: "<cond>"
+  bookend_positions: [0, 3, 4]
+  slots:
+    - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+      name: cell_type
+      slot_type: categorical
+      width: 1
+      obs_key: cell_type
+      override_value: ""
+      codebook_key: cell_type_token_vocab
+    - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+      name: target_gene
+      slot_type: gene_index
+      width: 1
+      obs_key: target_gene
+      override_value: ""
+      codebook_key: target_gene_to_token_id_info
+      alias_obs_key: gene_target
+  control_indicator:
+    _target_: src.modules.condition_formats.condition_format.ControlIndicator
+    obs_key: target_gene
+    control_value: non-targeting

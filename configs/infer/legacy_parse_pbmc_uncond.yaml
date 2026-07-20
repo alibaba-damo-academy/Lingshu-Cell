@@ -1,0 +1,81 @@
+# @package _global_
+#
+# Legacy inference config for PARSE PBMC unconditional generation.
+# Uses the VCC tokenizer with fixed condition prefix (H1 + non-targeting).
+#
+# Usage:
+#   python -m workflows.infer.main \
+#       --config-name infer/legacy_parse_pbmc_uncond \
+#       checkpoint.model_path=/path/to/parse_pbmc_uncond_85M.pth \
+#       task.condition_csv=/path/to/conditions.csv
+
+defaults:
+  - /infer_schema
+  - /hydra: infer
+  - /modules/tokenizers@tokenizer: dense_gene1tok
+  - /modules/models@model: patch_dense
+  - /modules/samplers@sampler: default
+  - _self_
+
+name: parse_pbmc_uncond
+seed: 3407
+device: auto
+dtype: auto
+
+output:
+  workdir: "${checkpoint.training_dir}"
+  sample_dir: "samples/${name}/ema-${checkpoint.ema_std}-iter-${checkpoint.iteration}-step${sampler.steps}-${sampler.algorithm}-${sampler.t_schedule}"
+
+checkpoint:
+  is_legacy: true
+  training_dir: ""
+  model_path: ""
+  iteration: 1050000
+  ema_std: 0.050
+
+task:
+  subtask: 1of1
+  base_seed: 50000
+  save_every_n_samples: 500
+  condition_csv: ""  # Inline: "n_cells\n10000"
+  batch_size: 64
+
+# Override tokenizer: fix condition slots to unconditional defaults.
+# Both slots use override_value so no condition columns are needed in the CSV.
+tokenizer:
+  vocab_file: data/vocabs/legacy/tokenizer_vcc_cond_dense_gene1tok.json
+  condition_format:
+    slots:
+      - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+        name: cell_type
+        slot_type: categorical
+        width: 1
+        obs_key: cell_type
+        override_value: "H1"
+        codebook_key: cell_type_token_vocab
+      - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+        name: target_gene
+        slot_type: gene_index
+        width: 1
+        obs_key: target_gene
+        override_value: "non-targeting"
+        codebook_key: target_gene_to_token_id_info
+        alias_obs_key: gene_target
+
+# Model: patch_size=8, no gene embeddings (defaults from patch_dense.yaml)
+model:
+  config:
+    patch_size: 8
+    patch_token_shuffle_per_block: false
+    use_gene_embedding_in_condition: false
+    use_gene_embedding_fusion: false
+
+sampler:
+  steps: 256
+  algorithm: origin
+  t_schedule: cosine-t
+  cfg_scale: 0.0
+  enforce_zero_snr: true
+  unmask_schedule: deterministic
+  eps: 1.0e-3
+  eps_start: 2.0e-4

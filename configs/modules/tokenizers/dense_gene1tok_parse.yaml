@@ -1,0 +1,25 @@
+_target_: src.modules.tokenizers.dense_gene1tok_tokenizer.DenseGene1TokTokenizer
+vocab_file: data/vocabs/parse_gene1tok.json
+condition_format:
+  _target_: src.modules.condition_formats.condition_format.ConditionFormat
+  bookend_token: "<cond>"
+  bookend_positions: [0, 3, 4]
+  slots:
+    - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+      name: donor
+      slot_type: categorical
+      width: 1
+      obs_key: donor
+      override_value: ""
+      codebook_key: donor_token_vocab
+    - _target_: src.modules.condition_formats.condition_format.ConditionSlot
+      name: cytokine
+      slot_type: categorical
+      width: 1
+      obs_key: cytokine
+      override_value: ""
+      codebook_key: cytokine_token_vocab
+  control_indicator:
+    _target_: src.modules.condition_formats.condition_format.ControlIndicator
+    obs_key: cytokine
+    control_value: PBS

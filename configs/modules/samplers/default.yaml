@@ -1,0 +1,48 @@
+steps: 64
+algorithm: origin
+cfg_scale: 0.0
+cfg_step_start: 0
+cfg_step_end: -1
+cfg_token_type: cfg_mask_condition
+t_schedule: cosine-t
+t_shift: 1.0
+t_exponent: 1.0
+eps: 1.0e-3
+eps_start: 2.0e-4
+enforce_zero_snr: true
+unmask_schedule: deterministic
+corrector_cls: DenseLogitCorrector
+corrector_strategies: default
+num_init_padding: null
+use_lm_head_masked_only: null
+cfg_uncond_overrides: {}
+
+# --- Clue-based biology prior injection ---
+# Pre-fills known differentially expressed gene counts into the initial
+# masked sequence before sampling.  Used for VCC gene perturbation
+# experiments.
+#
+# clue_csv: path to clue CSV with columns: target, feature, cell_type,
+#   target_mean, reference_mean, log2_fold_change.
+# clue_filter_rule_sets: list of filter rule strings (comma-separated AND,
+#   list-level OR). Example: ["reference_mean>=2,target_mean<=1,cell_type!=H1"]
+# clue_count_rules: one per filter rule set. Supported: count_<n>,
+#   count_by_round_target_mean, min_abs_log2_fold_change, no_count.
+# clue_gathering_mode: "any" or "all" across cell type groups.
+# clue_group_col: group column in clue CSV ("cell_type" for VCC, "DonorID" for PARSE).
+# clue_gene_id_name_csv: path to tab-separated gene ID -> name mapping.
+# clue_target_obs_key: obs_key in condition CSV that identifies the target gene.
+# condition_target_count: count value to place at the target gene position (-1 = disabled).
+# clue_overwrite_target: whether clue can overwrite the target gene's count.
+# clue_use_ensembl_as_target: convert target gene names to Ensembl IDs for
+#   matching (true for VCC, false for PARSE).
+clue_csv: ""
+clue_filter_rule_sets: []
+clue_count_rules: ["count_1"]
+clue_gathering_mode: any
+clue_group_col: cell_type
+clue_gene_id_name_csv: ""
+clue_target_obs_key: target_gene
+condition_target_count: -1
+clue_overwrite_target: true
+clue_use_ensembl_as_target: true
