@@ -5,9 +5,7 @@
 ## Setup
 
 ```bash
-git clone <repo_url> && cd Lingshu-Cell
 pip install -r requirements.txt
-export PYTHONPATH=.
 ```
 
 ## Data Preparation
