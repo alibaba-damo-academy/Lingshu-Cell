@@ -8,6 +8,8 @@
 pip install -r requirements.txt
 ```
 
+> Requires CUDA and a C++ compiler for flash-attention and fused kernel installation. See `requirements.txt` for details.
+
 ## Data Preparation
 
 This repository does not include training data or evaluation datasets.

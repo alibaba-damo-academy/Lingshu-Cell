@@ -4,7 +4,7 @@
 # Usage:
 #   python -m workflows.eval.main --config-name eval/vcc \
 #       sample_dir=/path/to/sample_dir \
-#       real_data=/path/to/real.h5ad
+#       "metrics=[vcc_test]"
 
 defaults:
   - /eval_schema
@@ -24,36 +24,20 @@ metrics:
   - vcc_test
 
 external:
-  vcc_val30:
-    predict_filename: all_samples_lowerbound_for_cell_eval.h5ad
-    params:
-      _target_: src.modules.evaluators.external.vcc_score.VCCScoreParams
-      script_name: VCC_Score_general.sh
-      conda_env: ""
-      threads: 40
   vcc_val:
-    predict_filename: all_samples_lowerbound_for_cell_eval.h5ad
+    predict_filename: merged_with_control.h5ad
     params:
       _target_: src.modules.evaluators.external.vcc_score.VCCScoreParams
       script_name: VCC_Score_general_VCC_Val.sh
       conda_env: ""
       threads: 40
   vcc_test:
-    predict_filename: all_samples_lowerbound_for_cell_eval.h5ad
+    predict_filename: merged_with_control.h5ad
     params:
       _target_: src.modules.evaluators.external.vcc_score.VCCScoreParams
       script_name: VCC_Score_general_VCC_Test.sh
       conda_env: ""
       threads: 40
-  parse_organoid:
-    predict_filename: all_samples_lowerbound_for_cell_eval.h5ad
-    params:
-      _target_: src.modules.evaluators.external.vcc_score.VCCScoreParams
-      script_name: PARSE_Organoid_Simu_script.sh
-      conda_env: ""
-      threads: 40
-      exp_id: ""
-      donor_id: ""
   parse_cond_val:
     predict_filename: all_samples_lowerbound_for_cell_eval.h5ad
     params:

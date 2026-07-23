@@ -73,22 +73,23 @@ if [ -n "$CONTROL_H5AD" ]; then
     MERGED_H5AD="$SAMPLE_DIR/merged_with_control.h5ad"
     echo "=== Merging with control cells ==="
     python workflows/utils/merge_with_control.py \
-        --sample_dir "$SAMPLE_DIR" \
+        --predict "$SAMPLE_DIR/merged.h5ad" \
         --control "$CONTROL_H5AD" \
-        --output "$MERGED_H5AD" \
-        --target_obs_key target_gene \
-        --control_value non-targeting
+        --output "$MERGED_H5AD"
 
     echo "Merged output: $MERGED_H5AD"
 
     # --- VCC Evaluation ---
     if [ -n "$VCC_TEST_VALIDATION_H5AD" ] && [ -n "$VCC_TEST_BASELINE_DIR" ]; then
+        CELL_EVAL_CONDA="${CELL_EVAL_CONDA:-}"
         echo "=== Running VCC cell-eval ==="
         export VCC_TEST_VALIDATION_H5AD VCC_TEST_BASELINE_DIR
 
         python -m workflows.eval.main \
+            --config-name eval/vcc \
             sample_dir="$SAMPLE_DIR" \
-            "metrics=[vcc_test]"
+            "metrics=[vcc_test]" \
+            "external.vcc_test.params.conda_env=$CELL_EVAL_CONDA"
 
         echo "=== VCC Evaluation complete ==="
     else

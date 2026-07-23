@@ -39,11 +39,6 @@ import src.modules.evaluators.umap  # noqa: F401
 import src.modules.evaluators.distribution  # noqa: F401
 import src.modules.evaluators.linregress  # noqa: F401
 import src.modules.evaluators.expressed_genes  # noqa: F401
-import src.modules.evaluators.batch_effect  # noqa: F401
-import src.modules.evaluators.batch_integration  # noqa: F401
-import src.modules.evaluators.batch_unification  # noqa: F401
-import src.modules.evaluators.pbmc_cell_type_proportion  # noqa: F401
-import src.modules.evaluators.external.organoid_cell_eval  # noqa: F401
 import src.modules.evaluators.external.vcc_score  # noqa: F401
 
 

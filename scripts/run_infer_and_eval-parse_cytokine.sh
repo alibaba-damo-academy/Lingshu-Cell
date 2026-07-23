@@ -70,20 +70,25 @@ if [ -n "$PARSE_TEST_DATA_DIR" ]; then
     if [ -f "$DONOR_H5AD" ]; then
         echo "=== Merging with PBS control cells from ${DONOR_H5AD} ==="
         python workflows/utils/merge_with_control.py \
-            --sample_dir "$SAMPLE_DIR" \
+            --predict "$SAMPLE_DIR/merged.h5ad" \
             --control "$DONOR_H5AD" \
             --output "$MERGED_H5AD" \
             --target_obs_key cytokine \
-            --control_value PBS
+            --control_value PBS \
+            --gene_id_name_csv data/vcc/gene_id_name.csv \
+            --convert_predict name_to_id
 
         echo "Merged output: $MERGED_H5AD"
 
         # Run cell-eval
+        CELL_EVAL_CONDA="${CELL_EVAL_CONDA:-}"
         echo "=== Running PARSE cell-eval ==="
         export PARSE_TEST_DATA_DIR
         python -m workflows.eval.main \
+            --config-name eval/vcc \
             sample_dir="$SAMPLE_DIR" \
             "metrics=[parse_cond_test]" \
+            "external.parse_cond_test.params.conda_env=$CELL_EVAL_CONDA" \
             "external.parse_cond_test.params.donor_id=${DONOR}"
 
         echo "=== Evaluation complete ==="

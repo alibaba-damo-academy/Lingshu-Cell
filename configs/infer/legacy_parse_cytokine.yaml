@@ -46,9 +46,11 @@ tokenizer:
   vocab_file: data/vocabs/legacy/tokenizer_vcc_cond_dense_gene1tok_parse.json
 
 # Model: default settings (patch_size=8, no gene embeddings)
+# padding_multiple=128 is required to match the legacy checkpoint's vocab padding.
 model:
   config:
     patch_size: 8
+    padding_multiple: 128
     patch_token_shuffle_per_block: false
     use_gene_embedding_in_condition: false
     use_gene_embedding_fusion: false
