@@ -74,4 +74,4 @@ Sampling parameters: `steps=3`, `cfg_scale=1`, `cfg_general_control`. Test donor
 
 ## License
 
-[MIT License](LICENSE). See [NOTICE](NOTICE) for third-party attributions.
+CC BY-NC-ND_4.0
